@@ -51,7 +51,7 @@ public class Room {
     @Column(name = "price_per_day", nullable = false)
     private double pricePerDay;
 
-    @OneToMany(mappedBy = "reservation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @SQLRestriction("is_deleted IS NULL")
     private List<Reservation> reservations;
 
