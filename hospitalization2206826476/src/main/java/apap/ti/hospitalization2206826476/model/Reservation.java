@@ -34,7 +34,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "reservation")
 @SQLDelete(sql = "UPDATE reservation SET is_deleted = true WHERE id=?")
-@SQLRestriction("is_deleted IS NULL")
+@SQLRestriction("is_deleted = false")
 public class Reservation {
     @Id
     private String id;

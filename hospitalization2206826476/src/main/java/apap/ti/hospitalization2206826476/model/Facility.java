@@ -30,7 +30,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "facility")
 @SQLDelete(sql = "UPDATE facility SET is_deleted = true WHERE id=?")
-@SQLRestriction("is_deleted IS NULL")
+@SQLRestriction("is_deleted = false")
 public class Facility {
     @Id
     private UUID id;

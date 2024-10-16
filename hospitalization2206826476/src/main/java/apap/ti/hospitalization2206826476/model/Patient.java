@@ -28,7 +28,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "patient")
 @SQLDelete(sql = "UPDATE patient SET is_deleted = true WHERE id=?")
-@SQLRestriction("is_deleted IS NULL")
+@SQLRestriction("is_deleted = false")
 public class Patient {
     @Id
     private UUID id;

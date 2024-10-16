@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <object th:include="~{fragments/common :: js}" th:remove="tag "></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag "></object>
+  <title>Update Room</title>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar('rooms')}"></nav>
+    <div class="container">
+        <div class="text-center my-4">
+            <h2>Update Room</h2>
+        </div>
+        <div class="row justify-content-center">
+            <div class="card" style="width: 60rem;">
+                <div class="card-body">
+                    <div>
+                        <form th:action="@{/rooms/update}" th:object="${roomDTO}" method="POST">
+                            <div class="row my-3">
+                                <label for="name" class="col-sm-2 fw-bold col-form-label">Room ID</label>
+                                <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="text" id="name" th:field="*{id}" readonly="true"/>
+                                </div>
+                            </div>
+
+                            <div class="row my-3">
+                                <label for="name" class="col-sm-2 fw-bold col-form-label">Room Name</label>
+                                <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="text" id="name" th:field="*{name}"/>
+                                </div>
+                            </div>
+
+                            <div class="row my-3">
+                                <label for="maxCapacity" class="col-sm-2 fw-bold col-form-label">Max Capacity</label>
+                                <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="number" id="maxCapacity" th:field="*{maxCapacity}"/>
+                                </div>
+                            </div>
+
+                            <div class="row my-3">
+                                <label for="pricePerDay" class="col-sm-2 fw-bold col-form-label">Price Per Day (IDR)</label>
+                                <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="number" id="pricePerDay" th:field="*{pricePerDay}"/>
+                                </div>
+                            </div>
+                            
+
+                            <div class="form-group row my-3">
+                                <label for="description" class="col-sm-2 fw-bold col-form-label">Description</label>
+                                <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
+                                <div class="col-sm-9">
+                                    <textarea class="form-control" id="description" th:field="*{description}"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="text-center m-3">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <a class="btn btn-primary" th:href="@{/rooms/{roomId}(roomId=${roomDTO.id})}">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

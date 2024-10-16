@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+  <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+  <title>Rooms</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.css" />
+  <script src="https://cdn.datatables.net/2.1.7/js/dataTables.js"></script>
+</head>
+
+<body>
+<nav th:replace="~{fragments/navbar :: navbar('rooms')}"></nav>
+  <div class="container">
+    <div class="text-center pt-5">
+      <h2>Room</h2>
+    </div>
+    <div class="text-center m-3">
+        <a type="button" class="btn btn-primary m-2" href="/rooms/create">Add Room</a>
+    </div>
+    <table id="tableRoom" class="display">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Max Capacity</th>
+          <th>Price Per Day</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr th:each="room, iterationStatus: ${listRoom}">
+        <td>
+            <p class="card-text col-sm-8" th:text="${room.id}"></p>
+        </td>
+        <td>
+            <p class="card-text col-sm-8" th:text="${room.name}"></p>
+        </td>
+        <td>
+            <p class="card-text col-sm-8" th:text="${room.maxCapacity}"></p>
+        </td>
+        <td>
+            <p class="card-text col-sm-8" th:text="${room.pricePerDay}"></p>
+        </td>
+        <td>
+            <a type="button" class="btn btn-md btn-primary" th:href="@{/rooms/{id}(id=${room.id})}">Detail</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <script>
+    $(document).ready( function () {
+        $('#tableRoom').DataTable();
+    } );
+  </script>
+</body>
+
+</html>

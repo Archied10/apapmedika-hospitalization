@@ -5,19 +5,20 @@
     <meta charset="UTF-8">
     <object th:include="~{fragments/common :: js}" th:remove="tag "></object>
     <object th:include="~{fragments/common :: css}" th:remove="tag "></object>
-    <title>500 Internal Server Error</title>
+    <title>Room Response</title>
 </head>
 
 <body>
-    <nav th:replace="~{fragments/navbar :: navbar('beranda')}"></nav>
+    <nav th:replace="~{fragments/navbar :: navbar('rooms')}"></nav>
     <div class="container">
         <div class="card m-4 p-4">
             <div class="card-body">
                 <div class="text-center">
-                    <h2>Internal Server Error</h2>
+                    <h2 th:each="message : ${responseMessage}" th:text="${message}"></h2>
                 </div>
                 <div class="text-center m-3">
                     <a type="button" class="btn btn-md btn-primary" href="/">Home</a>
+                    <a type="button" class="btn btn-md btn-primary" href="/rooms">View All Rooms</a>
                 </div>
             </div>
         </div>
