@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <object th:include="~{fragments/common :: js}" th:remove="tag "></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag "></object>
+    <title>Create Patient</title>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar('reservations')}"></nav>
+    <div class="container">
+        <div th:if="${error}" class="alert alert-danger mt-3" th:text="${error}"></div>
+        <div id="patient-not-found" class="text-center">
+            <h3>Patient Not Found</h3>
+            <p>Please insert this identity as a new patient before making the reservation.</p>
+            <button id="insert-patient-btn" class="btn btn-primary">Insert New Patient</button>
+        </div>
+        <div id="patient-form" style="display: none;">
+            <div class="text-center my-4">
+                <h2>Step 1 of 3</h2>
+                <h2>Create Patient</h2>
+            </div>
+            <div class="row justify-content-center">
+                <div class="card" style="width: 60rem;">
+                    <div class="card-body">
+                        <form th:action="@{/reservations/create/step2}" th:object="${reservationDTO}" method="GET">
+                            <div class="row my-3">
+                                <label for="name" class="col-sm-2 fw-bold col-form-label">Name</label>
+                                <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="text" id="name" th:field="*{name}" />
+                                </div>
+                            </div>
+
+                            <div class="row my-3">
+                                <label for="NIK" class="col-sm-2 fw-bold col-form-label">NIK</label>
+                                <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="text" id="NIK" th:field="*{NIK}" />
+                                </div>
+                            </div>
+
+                            <div class="row my-3">
+                                <label for="email" class="col-sm-2 fw-bold col-form-label">Email</label>
+                                <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="email" id="email" th:field="*{email}" />
+                                </div>
+                            </div>
+
+                            <div class="row my-3">
+                                <label for="gender" class="col-sm-2 fw-bold col-form-label">Gender</label>
+                                <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
+                                <div th:each="g : ${gender}">
+                                    <input type="radio" th:field="*{gender}" th:value="${#strings.equals(g, 'Male')}" />
+                                    <label th:for="${#ids.prev('gender')}" th:text="${g}"></label>
+                                </div>
+                            </div>
+
+                            <div class="row my-3">
+                                <label for="dob" class="col-sm-2 fw-bold col-form-label">Date of Birth</label>
+                                <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="date" id="dob" th:field="*{birthDate}" />
+                                </div>
+                            </div>
+
+                            <div class="text-center m-3">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <a class="btn btn-danger" href="/reservations">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#insert-patient-btn').on('click', function() {
+                $('#patient-form').show();
+                $('#patient-not-found').hide();
+            });
+        });
+    </script>
+</body>
+
+</html>

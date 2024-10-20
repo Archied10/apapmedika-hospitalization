@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Reservations Chart</title>
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar('reservations')}"></nav>
+    <div class="container mt-4">
+        <h1 class="mb-4">Chart</h1>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="period">Periode:</label>
+                <select id="period" class="form-control">
+                    <option value="monthly">Monthly</option>
+                    <option value="quarter">Quarter</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="year">Year:</label>
+                <input type="number" id="year" class="form-control" value="2024">
+            </div>
+            <div class="col-md-4">
+                <button id="applyBtn" class="btn btn-primary mt-4">Apply</button>
+            </div>
+        </div>
+        <canvas id="reservationChart"></canvas>
+    </div>
+
+    <script th:inline="javascript">
+        let chart;
+
+        function fetchChartData() {
+            const period = document.getElementById('period').value;
+            const year = document.getElementById('year').value;
+
+            fetch(`/api/reservations/chart?period=${period}&year=${year}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 200) {
+                        updateChart(data.data, period);
+                    } else {
+                        console.error('Error fetching chart data:', data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function updateChart(chartData, period) {
+            const ctx = document.getElementById('reservationChart').getContext('2d');
+            const labels = chartData.map(item => item.label);
+            const values = chartData.map(item => item.value);
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `Number of Reservations Per ${period === 'monthly' ? 'Month' : 'Quarter'}`,
+                        data: values,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Reservations'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: period === 'monthly' ? 'Month' : 'Quarter'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        document.getElementById('applyBtn').addEventListener('click', fetchChartData);
+
+        fetchChartData();
+    </script>
+</body>
+
+</html>
