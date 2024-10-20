@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <object th:include="~{fragments/common :: js}" th:remove="tag "></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag "></object>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
+    <title>Update Facilities</title>
+</head>
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar('reservations')}"></nav>
+    <div class="container mt-5">
+        <h3 class="text-center">Update Facilities for <span th:text="${reservationDTO.reservationId}"></span></h3>
+
+        <form th:action="@{/reservations/{reservationId}/update-facilities(reservationId=${reservationDTO.reservationId})}" th:object="${reservationDTO}" method="post">
+            <input type="hidden" th:field="*{reservationId}">
+            
+            <div class="form-group">
+                <label for="facility">Facilities</label>
+                <table class="table">
+                    <th class="d-flex justify-content-end">
+                        <button class="btn btn-primary" type="submit" name="addRow">Add Row</button>
+                    </th>
+                    <tr th:each="facility, iterationStatus : *{facilities}">
+                        <td>
+                            <select th:field="*{facilities[__${iterationStatus.index}__].id}"
+                                class="form-control">
+                                <div th:each="facilityExisting : ${facilitiesExisting}">
+                                    <option th:text="${facilityExisting.name + '(+Rp ' + facilityExisting.fee +')'}"
+                                        th:value="${facilityExisting.id}"></option>
+                                </div>
+                            </select>
+                        </td>
+                        <td>
+                            <button th:value="${iterationStatus.index}" class="btn btn-danger"
+                                type="submit" name="deleteRow"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <a type="button" class="btn btn-md btn-danger" th:href="@{/reservations/{reservationId}(reservationId=${reservationDTO.reservationId})}">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

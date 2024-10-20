@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <object th:include="~{fragments/common :: js}" th:remove="tag "></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag "></object>
+    <title>Reservation Detail</title>
+</head>
+
+<body>
+<nav th:replace="~{fragments/navbar :: navbar('reservations')}"></nav>
+<div class="container">
+    <div class="text-center m-3">
+        <h4>Reservation <span th:text="${reservation.id}"></span> Detail</h4>
+        <a type="button" class="btn btn-primary btn-md" th:href="@{/reservations/{reservationId}/update-room(reservationId=${reservation.id})}">Update Room</a>
+        <a type="button" class="btn btn-primary btn-md" th:href="@{/reservations/{reservationId}/update-facilities(reservationId=${reservation.id})}">Update Facility</a>
+        <a type="button" class="btn btn-danger btn-md" data-bs-toggle="modal" data-bs-target=#deleteModal>Delete</a>
+    </div>
+    <div th:if="${error}" class="alert alert-danger mt-3" th:text="${error}"></div>
+    <div class="row justify-content-center">
+        <div class="card" style="width: 80rem;">
+            <div class="card-body">
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3">ID</p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <p class="card-text col-sm-5" th:text="${reservation.id}"></p>
+                </div>
+
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3">Patient Name</p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <p class="card-text col-sm-5" th:text="${reservation.patient.name}"></p>
+                </div>
+
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3">Email</p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <p class="card-text col-sm-5" th:text="${reservation.patient.email}"></p>
+                </div>
+
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3">Gender</p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <p th:if="${reservation.patient.gender}" class="card-text col-sm-5">Male</p>
+                    <p th:unless="${reservation.patient.gender}" class="card-text col-sm-5">Female</p>
+                </div>
+
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3">Room Name</p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <a class="card-text col-sm-5" th:text="${reservation.room.name}" th:href="@{/rooms/{roomId}(roomId=${reservation.room.id})}"></a>
+                </div>
+
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3">Assigned Nurse</p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <p class="card-text col-sm-5" th:text="${reservation.nurse.name}"></p>
+                </div>
+
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3">Date In</p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <p class="card-text col-sm-5" th:text="${#dates.format(reservation.dateIn, 'dd MMMM yyyy')}"></p>
+                </div>
+
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3">Date Out</p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <p class="card-text col-sm-5" th:text="${#dates.format(reservation.dateOut, 'dd MMMM yyyy')}"></p>
+                </div>
+
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3">Status</p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <p th:if="${reservation.dateIn.after(#dates.createNow())}" class="card-text col-sm-5">Upcoming</p>
+                    <p th:if="${reservation.dateOut.before(#dates.createNow())}" class="card-text col-sm-5">Done</p>
+                    <p th:if="${not reservation.dateIn.after(#dates.createNow()) AND not reservation.dateOut.before(#dates.createNow())}" class="card-text col-sm-5">Ongoing</p>
+                </div>
+
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3">Facilities</p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <p class="card-text col-sm-5" th:text="${facility}"></p>
+                </div>
+
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3">Total Fee</p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <a type="button" class="card-text col-sm-5" th:text="${'Rp' + reservation.totalFee}" data-bs-toggle="modal" data-bs-target=#feeModal></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal modal-warning fade in" id="feeModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Fee Details</h5>
+             </div>
+            <div class="modal-body">
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3" th:text="${reservation.room.name + ' Room'}"></p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <p class="card-text col-sm-5" th:text="${'Rp' + reservation.room.pricePerDay + '/Day'}"></p>
+                </div>
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3" th:text="${'Room Total (' + daysStay + ' day)'}"></p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <p class="card-text col-sm-5" th:text="${'Rp' + roomFee}"></p>
+                </div>
+                <div th:each="facility: ${reservation.facilities}">
+                    <div class="row my-3">
+                        <p class="card-text fw-bold col-sm-3" th:text="${facility.name + ' Facilities'}"></p>
+                        <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                        <p class="card-text col-sm-5" th:text="${'Rp' + facility.fee}"></p>
+                    </div>
+                </div>
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3" th:text="Total"></p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <p class="card-text col-sm-5" th:text="${'Rp' + reservation.totalFee}"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a type="button" class="btn btn-danger" data-bs-dismiss="modal">Back</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal modal-warning fade in" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Reservation</h5>
+             </div>
+            <div class="modal-body">
+               Are you sure you want to delete <strong><span th:text="${reservation.id}"></span></strong> reservation?
+            </div>
+            <div class="modal-footer">
+                <a type="button" class="btn btn-primary" th:href="@{/reservations/{reservationId}/delete(reservationId=${reservation.id})}">Yes</a>
+                <a type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

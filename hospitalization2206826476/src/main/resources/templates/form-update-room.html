@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+  <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+  <title>Update Room</title>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar('rooms')}"></nav>
+    <div class="container">
+        <div class="text-center my-4">
+            <h2>Update Room</h2>
+        </div>
+        <div class="row justify-content-center">
+            <div class="card" style="width: 36rem;">
+                <div class="card-body">
+                    <form th:action="@{/rooms/{roomId}/update(roomId=${roomDTO.id})}" th:object="${roomDTO}" method="POST">
+                        
+                        <div class="mb-3">
+                            <label for="id" class="form-label">Room ID</label>
+                            <input type="text" class="form-control" id="id" th:field="*{id}" readonly="true" placeholder="Room ID">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Room Name</label>
+                            <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Room Name" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="maxCapacity" class="form-label">Max Capacity</label>
+                            <input type="number" class="form-control" id="maxCapacity" th:field="*{maxCapacity}" placeholder="0" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="pricePerDay" class="form-label">Price Per Day (IDR)</label>
+                            <input type="number" class="form-control" id="pricePerDay" th:field="*{pricePerDay}" placeholder="0" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" th:field="*{description}" placeholder="Lorem ipsum" rows="3"></textarea>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <a class="btn btn-danger" th:href="@{/rooms/{roomId}(roomId=${roomDTO.id})}">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

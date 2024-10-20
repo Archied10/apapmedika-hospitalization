@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <object th:include="~{fragments/common :: js}" th:remove="tag "></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag "></object>
+    <title>Reservation Feedback</title>
+</head>
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar('reservations')}"></nav>
+    <div class="container mt-5">
+        <h2 class="text-center">Reservation Successful</h2>
+        <div class="alert alert-success" role="alert">
+            Your reservation has been successfully created!
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Reservation Details</h5>
+                <p class="card-text">Reservation ID: <span th:text="${reservation.id}"></span></p>
+                <p class="card-text">Check-in Date: <span th:text="${#dates.format(reservation.dateIn, 'dd-MM-yyyy')}"></span></p>
+                <p class="card-text">Check-out Date: <span th:text="${#dates.format(reservation.dateOut, 'dd-MM-yyyy')}"></span></p>
+                <p class="card-text">Room: <span th:text="${reservation.room.name}"></span></p>
+                <p class="card-text">Total Fee: Rp<span th:text="${#numbers.formatDecimal(reservation.totalFee, 0, 'COMMA', 2, 'POINT')}"></span></p>
+            </div>
+        </div>
+        <a href="/" class="btn btn-primary mt-3">Back to Home</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
