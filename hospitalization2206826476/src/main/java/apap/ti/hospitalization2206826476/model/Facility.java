@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
@@ -30,7 +32,8 @@ import lombok.Setter;
 @Entity
 @Table(name = "facility")
 @SQLDelete(sql = "UPDATE facility SET is_deleted = true WHERE id=?")
-@SQLRestriction("is_deleted = false")
+@FilterDef(name = "deletedFacilityFilter", parameters = @ParamDef(name = "isDeleted", type = org.hibernate.type.descriptor.java.BooleanJavaType.class))
+@Filter(name = "deletedFacilityFilter", condition = "is_deleted = :isDeleted")
 public class Facility {
     @Id
     private UUID id;
@@ -44,7 +47,6 @@ public class Facility {
     private double fee;
 
     @ManyToMany(mappedBy = "facilities", fetch = FetchType.LAZY)
-    @SQLRestriction("is_deleted IS NULL")
     private List<Reservation> reservations;
 
     @CreationTimestamp

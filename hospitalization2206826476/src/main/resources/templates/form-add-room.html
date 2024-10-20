@@ -3,64 +3,51 @@
 
 <head>
   <meta charset="UTF-8">
-  <object th:include="~{fragments/common :: js}" th:remove="tag "></object>
-    <object th:include="~{fragments/common :: css}" th:remove="tag "></object>
-  <title>Create Room</title>
+  <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+  <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+  <title>Add Room</title>
 </head>
 
 <body>
     <nav th:replace="~{fragments/navbar :: navbar('rooms')}"></nav>
     <div class="container">
         <div class="text-center my-4">
-            <h2>Create Room</h2>
+            <h2>Add Room</h2>
         </div>
         <div class="row justify-content-center">
-            <div class="card" style="width: 60rem;">
+            <div class="card" style="width: 36rem;">
                 <div class="card-body">
-                    <div>
-                        <form th:action="@{/rooms/create}" th:object="${roomDTO}" method="POST">
-                            <div class="row my-3">
-                                <label for="name" class="col-sm-2 fw-bold col-form-label">Room Name</label>
-                                <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
-                                <div class="col-sm-9">
-                                    <input class="form-control" type="text" id="name" th:field="*{name}"/>
-                                </div>
-                            </div>
+                    <form th:action="@{/rooms/create}" th:object="${roomDTO}" method="POST">
+                        
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Room Name</label>
+                            <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Room Name" required>
+                        </div>
 
-                            <div class="row my-3">
-                                <label for="maxCapacity" class="col-sm-2 fw-bold col-form-label">Max Capacity</label>
-                                <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
-                                <div class="col-sm-9">
-                                    <input class="form-control" type="number" id="maxCapacity" th:field="*{maxCapacity}"/>
-                                </div>
-                            </div>
+                        <div class="mb-3">
+                            <label for="maxCapacity" class="form-label">Max Capacity</label>
+                            <input type="number" class="form-control" id="maxCapacity" th:field="*{maxCapacity}" placeholder="0" required>
+                        </div>
 
-                            <div class="row my-3">
-                                <label for="pricePerDay" class="col-sm-2 fw-bold col-form-label">Price Per Day (IDR)</label>
-                                <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
-                                <div class="col-sm-9">
-                                    <input class="form-control" type="number" id="pricePerDay" th:field="*{pricePerDay}"/>
-                                </div>
-                            </div>
-                            
+                        <div class="mb-3">
+                            <label for="pricePerDay" class="form-label">Price Per Day (IDR)</label>
+                            <input type="number" class="form-control" id="pricePerDay" th:field="*{pricePerDay}" placeholder="0" required>
+                        </div>
 
-                            <div class="form-group row my-3">
-                                <label for="description" class="col-sm-2 fw-bold col-form-label">Description</label>
-                                <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
-                                <div class="col-sm-9">
-                                    <textarea class="form-control" id="description" th:field="*{description}"></textarea>
-                                </div>
-                            </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" th:field="*{description}" placeholder="Lorem ipsum" rows="3"></textarea>
+                        </div>
 
-                            <div class="text-center m-3">
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                                <a class="btn btn-primary" href="/rooms">Cancel</a>
-                            </div>
-                        </form>
-                    </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <a class="btn btn-danger" href="/rooms">Cancel</a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </body>
+
 </html>

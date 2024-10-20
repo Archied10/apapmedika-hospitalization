@@ -1,8 +1,10 @@
 package apap.ti.hospitalization2206826476.controller;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,16 +15,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import apap.ti.hospitalization2206826476.dto.request.AddRoomRequestDTO;
+import apap.ti.hospitalization2206826476.dto.request.CheckRoomRequestDTO;
 import apap.ti.hospitalization2206826476.dto.request.UpdateRoomRequestDTO;
+import apap.ti.hospitalization2206826476.model.Patient;
 import apap.ti.hospitalization2206826476.model.Room;
 import apap.ti.hospitalization2206826476.service.RoomService;
 import jakarta.validation.Valid;
 
 @Controller
 public class RoomController {
+    private final RoomService roomService;
 
-    @Autowired
-    private RoomService roomService;
+    public RoomController(
+        RoomService roomService
+    ) {
+        this.roomService = roomService;
+    }
 
     @GetMapping("/rooms")
     public String listRooms(Model model) {
@@ -32,14 +40,36 @@ public class RoomController {
     }
 
     @GetMapping("/rooms/{roomId}")
-    public String detailRoom(@PathVariable("roomId") String roomId, 
-                            @RequestParam(value = "dateIn", required = false) Date dateIn,
-                            @RequestParam(value = "dateOut", required = false) Date dateOut, 
+    public String detailRoom(@PathVariable("roomId") String roomId,
+                            @RequestParam(value = "dateIn", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateIn,
+                            @RequestParam(value = "dateOut", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateOut,
                             Model model) {
-
         var room = roomService.getRoomById(roomId);
+        var roomDTO = new CheckRoomRequestDTO();
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date currentDate = cal.getTime();
+
+        roomDTO.setDateIn(dateIn != null ? dateIn : currentDate);
+        roomDTO.setDateOut(dateOut != null ? dateOut : currentDate);
+
+        if (roomDTO.getDateIn().after(roomDTO.getDateOut())) {
+            model.addAttribute("room", room);
+            model.addAttribute("roomDTO", roomDTO);
+            model.addAttribute("error", "Date In must be before or equal to Date Out");
+            return "view-room";
+        }
+
+        List<Patient> patients = roomService.getPatientInRoom(room, roomDTO.getDateIn(), roomDTO.getDateOut());
 
         model.addAttribute("room", room);
+        model.addAttribute("roomDTO", roomDTO);
+        model.addAttribute("patients", patients);
+        model.addAttribute("quota", room.getMaxCapacity() - patients.size());
 
         return "view-room";
     }
@@ -89,8 +119,8 @@ public class RoomController {
         return "form-update-room";
     }
 
-    @PostMapping("/rooms/update")
-    public String updateRoom(@Valid @ModelAttribute UpdateRoomRequestDTO roomDTO, BindingResult bindingResult, Model model) {
+    @PostMapping("/rooms/{roomId}/update")
+    public String updateRoom(@PathVariable("roomId") String roomId, @Valid @ModelAttribute UpdateRoomRequestDTO roomDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("responseMessage", bindingResult.getFieldErrors()
             .stream()
@@ -120,7 +150,7 @@ public class RoomController {
         roomService.deleteRoom(room);
 
         model.addAttribute("responseMessage",
-                String.format("%s Room With the ID %s has been successfully deleted.", room.getName(), room.getId()));
+                String.format("Berhasil menghapus ruangan %s", roomId));
 
         return "response-room";
     }

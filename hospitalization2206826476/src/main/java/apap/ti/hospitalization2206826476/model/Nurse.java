@@ -4,8 +4,10 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
@@ -27,7 +29,8 @@ import lombok.Setter;
 @Entity
 @Table(name = "nurse")
 @SQLDelete(sql = "UPDATE nurse SET is_deleted = true WHERE id=?")
-@SQLRestriction("is_deleted = false")
+@FilterDef(name = "deletedNurseFilter", parameters = @ParamDef(name = "isDeleted", type = org.hibernate.type.descriptor.java.BooleanJavaType.class))
+@Filter(name = "deletedNurseFilter", condition = "is_deleted = :isDeleted")
 public class Nurse {
     @Id
     private UUID id;

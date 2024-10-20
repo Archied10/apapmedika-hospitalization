@@ -4,8 +4,10 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -28,13 +30,14 @@ import lombok.Setter;
 @Entity
 @Table(name = "patient")
 @SQLDelete(sql = "UPDATE patient SET is_deleted = true WHERE id=?")
-@SQLRestriction("is_deleted = false")
+@FilterDef(name = "deletedPatientFilter", parameters = @ParamDef(name = "isDeleted", type = org.hibernate.type.descriptor.java.BooleanJavaType.class))
+@Filter(name = "deletedPatientFilter", condition = "is_deleted = :isDeleted")
 public class Patient {
     @Id
     private UUID id;
 
     @NotNull
-    @Column(name = "nik", nullable = false)
+    @Column(name = "nik", nullable = false, unique = true)
     private String NIK;
 
     @NotNull

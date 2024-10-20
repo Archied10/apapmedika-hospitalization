@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Step 2 - Find Room</title>
+</head>
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar('reservations')}"></nav>
+    <div class="container mt-5">
+        <h2 class="text-center">Step 2 of 3</h2>
+        <h3 class="text-center">Find Room for <span th:text="${reservationDTO.name}"></span></h3>
+
+        <form th:action="@{/reservations/create/step2}" th:object="${reservationDTO}" method="POST">
+            <input type="hidden" th:field="*{NIK}">
+            <input type="hidden" th:field="*{name}">
+            <input type="hidden" th:field="*{email}">
+            <input type="hidden" th:field="*{birthDate}">
+            <input type="hidden" th:field="*{gender}">
+
+            <div class="form-group">
+                <label for="nurseId">Assigned Nurse</label>
+                <select class="form-control" id="nurseId" th:field="*{nurseId}">
+                    <option value="">Select a nurse</option>
+                    <option th:each="nurse : ${nurses}" th:value="${nurse.id}" th:text="${nurse.name}"></option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="dateIn">Reservation Date In</label>
+                <input type="date" class="form-control" id="dateIn" th:field="*{dateIn}">
+            </div>
+
+            <div class="form-group">
+                <label for="dateOut">Reservation Date Out</label>
+                <input type="date" class="form-control" id="dateOut" th:field="*{dateOut}">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        <div th:if="${error}" class="alert alert-danger mt-3" th:text="${error}"></div>
+
+        <div th:if="${not #lists.isEmpty(availableRooms)}">
+            <form th:action="@{/reservations/create/step3}" th:object="${reservationDTO}" method="GET">
+                <input type="hidden" th:field="*{NIK}">
+                <input type="hidden" th:field="*{name}">
+                <input type="hidden" th:field="*{email}">
+                <input type="hidden" th:field="*{birthDate}">
+                <input type="hidden" th:field="*{gender}">
+                <input type="hidden" th:field="*{nurseId}" id="hiddenNurseId">
+                <input type="hidden" th:field="*{dateIn}">
+                <input type="hidden" th:field="*{dateOut}">
+
+                <div class="form-group">
+                    <label for="roomId">Room</label>
+                    <select class="form-control" id="roomId" th:field="*{roomId}">
+                        <option value="">Select a Room</option>
+                        <option th:each="room : ${availableRooms}" th:value="${room.id}" 
+                                th:text="${room.name + ' (Rp' + room.pricePerDay + '/Day, ' + remainingCapacities.get(room.id) + ' Quota Available, Max ' + room.maxCapacity + ' Pax)'}"
+                        ></option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Continue</button>
+                <a href="/reservations" class="btn btn-danger">Cancel</a>
+            </form>
+        </div>
+
+        <div th:if="${availableRooms != null AND #lists.isEmpty(availableRooms)}">
+            <h4>There are no available rooms!</h4>
+            <button type="submit" class="btn btn-secondary" disabled>Continue</button>
+            <a href="/reservations" class="btn btn-danger">Cancel</a>
+        </div>
+
+        <div th:if="${availableRooms == null}">
+            <button type="submit" class="btn btn-secondary" disabled>Continue</button>
+            <a href="/reservations" class="btn btn-danger">Cancel</a>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var nurseSelect = document.getElementById('nurseId');
+            var hiddenNurseId = document.getElementById('hiddenNurseId');
+
+            nurseSelect.addEventListener('change', function() {
+                hiddenNurseId.value = this.value;
+            });
+        });
+    </script>
+</body>
+</html>

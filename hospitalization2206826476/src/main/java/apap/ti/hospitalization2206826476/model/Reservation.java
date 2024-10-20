@@ -2,11 +2,12 @@ package apap.ti.hospitalization2206826476.model;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -34,7 +35,8 @@ import lombok.Setter;
 @Entity
 @Table(name = "reservation")
 @SQLDelete(sql = "UPDATE reservation SET is_deleted = true WHERE id=?")
-@SQLRestriction("is_deleted = false")
+@FilterDef(name = "deletedReservationFilter", parameters = @ParamDef(name = "isDeleted", type = org.hibernate.type.descriptor.java.BooleanJavaType.class))
+@Filter(name = "deletedReservationFilter", condition = "is_deleted = :isDeleted")
 public class Reservation {
     @Id
     private String id;
@@ -53,27 +55,21 @@ public class Reservation {
     @Column(name = "total_fee", nullable = false)
     private double totalFee;
 
-    @NotNull
-    @Column(name = "patient_id", nullable = false)
-    private UUID patientId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "patient_id", referencedColumnName = "id")
+    private Patient patient;
 
-    @NotNull
-    @Column(name = "assigned_nurse_id", nullable = false)
-    private UUID assignedNurseID;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "assigned_nurse_id", referencedColumnName = "id")
+    private Nurse nurse;
 
-
-    @JoinColumn(name = "room_id", insertable = false, updatable = false)
-    @ManyToOne(targetEntity = Room.class, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "room_id", referencedColumnName = "id")
     private Room room;
-
-    @NotNull
-    @Column(name = "room_id", nullable = false)
-    private String roomId;
 
     @ManyToMany
     @JoinTable(name = "facility_reservation", joinColumns = @JoinColumn(name = "id_reservation"),
             inverseJoinColumns = @JoinColumn(name = "id_facility"))
-    @SQLRestriction("is_deleted IS NULL")
     List<Facility> facilities;
 
     @CreationTimestamp
@@ -84,7 +80,7 @@ public class Reservation {
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_date", nullable = false)
-    private Date updatedAt;
+    private Date updatedDate;
 
     @Column(name = "is_deleted")
     private boolean isDeleted;

@@ -8,7 +8,6 @@ import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.CascadeType;
@@ -33,8 +32,8 @@ import lombok.Setter;
 @Entity
 @Table(name = "room")
 @SQLDelete(sql = "UPDATE room SET is_deleted = true WHERE id=?")
-@FilterDef(name = "deletedProductFilter", parameters = @ParamDef(name = "isDeleted", type = org.hibernate.type.descriptor.java.BooleanJavaType.class))
-@Filter(name = "deletedProductFilter", condition = "is_deleted = :isDeleted")
+@FilterDef(name = "deletedRoomFilter", parameters = @ParamDef(name = "isDeleted", type = org.hibernate.type.descriptor.java.BooleanJavaType.class))
+@Filter(name = "deletedRoomFilter", condition = "is_deleted = :isDeleted")
 public class Room {
     @Id
     private String id;
@@ -56,7 +55,6 @@ public class Room {
     private double pricePerDay;
 
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @SQLRestriction("is_deleted IS NULL")
     private List<Reservation> reservations;
 
     @CreationTimestamp

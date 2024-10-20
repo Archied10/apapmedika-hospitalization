@@ -22,6 +22,7 @@
     <table id="tableRoom" class="display">
       <thead>
         <tr>
+          <th>No</th>
           <th>ID</th>
           <th>Name</th>
           <th>Max Capacity</th>
@@ -31,6 +32,9 @@
       </thead>
       <tbody>
       <tr th:each="room, iterationStatus: ${listRoom}">
+        <td>
+          <p class="card-text col-sm-8" th:text="${iterationStatus.count}"></p>
+        </td>
         <td>
             <p class="card-text col-sm-8" th:text="${room.id}"></p>
         </td>

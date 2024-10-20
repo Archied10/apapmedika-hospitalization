@@ -5,36 +5,36 @@
   <meta charset="UTF-8">
   <object th:include="~{fragments/common :: js}" th:remove="tag "></object>
     <object th:include="~{fragments/common :: css}" th:remove="tag "></object>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
   <title>Home</title>
 </head>
  
 <body>
   <nav th:replace="~{fragments/navbar :: navbar('home')}"></nav>
-  <div class="container text-center">
-    <div class="row pt-5 pb-2">
-      <h1>
-        <i class="bi bi-kanban"></i>
-        Hospitalization System
-        <i class="bi bi-kanban"></i>
-      </h1>
+  <div class="container mt-5">
+    <div class="row align-items-center mb-4">
+          <h1 class="display-4">Hospitalization System</h1>
     </div>
-    <div class="col">
-      <div>
-        Reservation Created
-      </div>
-    </div>
-    <div class="col">
-        <div>
-            Rooms Recorded
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="bg-info text-white p-4 text-center rounded">
+                <h2 class="display-4 mb-0" th:text="${reservationCount}"></h2>
+                <p class="mb-0">Reservations Created</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="bg-info text-white p-4 text-center rounded">
+                <h2 class="display-4 mb-0" th:text="${roomCount}"></h2>
+                <p class="mb-0">Rooms Recorded</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="bg-info text-white p-4 text-center rounded">
+                <h2 class="display-4 mb-0" th:text="${patientCount}"></h2>
+                <p class="mb-0">Patients Recorded</p>
+            </div>
         </div>
     </div>
-    <div class="col">
-        <div>
-           Patients Recorded
-        </div>
-    </div>
-  </div>
+</div>
 </body>
  
 </html>
