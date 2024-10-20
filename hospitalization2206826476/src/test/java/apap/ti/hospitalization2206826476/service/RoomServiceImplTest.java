@@ -38,7 +38,6 @@ public class RoomServiceImplTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        // Initialize Room, Reservations, and Patients for testing
         room = new Room();
         room.setId("RM0001");
         room.setMaxCapacity(2);
@@ -53,57 +52,71 @@ public class RoomServiceImplTest {
         patient2.setName("Jane Smith");
 
         reservation1 = new Reservation();
-        reservation1.setDateIn(new Date(2023, Calendar.SEPTEMBER, 20));
-        reservation1.setDateOut(new Date(2023, Calendar.SEPTEMBER, 25));
+        reservation1.setDateIn(new Date(2024, Calendar.OCTOBER, 20));
+        reservation1.setDateOut(new Date(2024, Calendar.OCTOBER, 25));
         reservation1.setPatient(patient1);
 
         reservation2 = new Reservation();
-        reservation2.setDateIn(new Date(2023, Calendar.SEPTEMBER, 26));
-        reservation2.setDateOut(new Date(2023, Calendar.SEPTEMBER, 30));
+        reservation2.setDateIn(new Date(2024, Calendar.OCTOBER, 26));
+        reservation2.setDateOut(new Date(2024, Calendar.OCTOBER, 30));
         reservation2.setPatient(patient2);
 
         room.getReservations().add(reservation1);
         room.getReservations().add(reservation2);
     }
 
+    /*
+     * Mengetes jika terdapat satu pasien pada range tanggal yang diberikan
+     */
     @Test
     public void testGetPatientInRoom_FilterByDate() {
-        // Mock the room and reservation database call
         when(roomDb.findById("RM0001")).thenReturn(Optional.of(room));
 
-        // Define the date range for filtering
-        Date dateIn = new Date(2023, Calendar.SEPTEMBER, 20);
-        Date dateOut = new Date(2023, Calendar.SEPTEMBER, 25);
+        Date dateIn = new Date(2024, Calendar.OCTOBER, 20);
+        Date dateOut = new Date(2024, Calendar.OCTOBER, 25);
 
-        // Call the method under test
         List<Patient> patients = roomService.getPatientInRoom(room, dateIn, dateOut);
 
-        // Verify the expected result
         assertNotNull(patients);
-        assertEquals(1, patients.size()); // Only one patient should match
-        assertEquals("John Doe", patients.get(0).getName()); // The matched patient should be John Doe
+        assertEquals(1, patients.size());
+        assertEquals("John Doe", patients.get(0).getName()); 
 
-        // Verify that no more interactions happen with the mock
         verify(roomDb, times(0)).save(any(Room.class));
     }
 
+    /*
+     * Mengetes jika terdapat banyak pasien pada range tanggal yang diberikan
+     */
     @Test
-    public void testGetPatientInRoom_NoPatientsInDateRange() {
-        // Mock the room and reservation database call
+    public void testGetPatientInRoom_MultiplePatientsInDateRange() {
         when(roomDb.findById("RM0001")).thenReturn(Optional.of(room));
 
-        // Define the date range where no reservations overlap
-        Date dateIn = new Date(2023, Calendar.OCTOBER, 1);
-        Date dateOut = new Date(2023, Calendar.OCTOBER, 5);
+        Date dateIn = new Date(2024, Calendar.OCTOBER, 22);
+        Date dateOut = new Date(2024, Calendar.OCTOBER, 26);
 
-        // Call the method under test
         List<Patient> patients = roomService.getPatientInRoom(room, dateIn, dateOut);
 
-        // Verify that no patients are returned
+        assertNotNull(patients);
+        assertEquals(2, patients.size());
+
+        verify(roomDb, times(0)).save(any(Room.class));
+    }
+
+    /*
+     * Mengetes jika tidak ada pasien pada range tanggal yang diberikan
+     */
+    @Test
+    public void testGetPatientInRoom_NoPatientsInDateRange() {
+        when(roomDb.findById("RM0001")).thenReturn(Optional.of(room));
+
+        Date dateIn = new Date(2024, Calendar.OCTOBER, 1);
+        Date dateOut = new Date(2024, Calendar.OCTOBER, 3);
+
+        List<Patient> patients = roomService.getPatientInRoom(room, dateIn, dateOut);
+
         assertNotNull(patients);
         assertTrue(patients.isEmpty());
 
-        // Verify that no more interactions happen with the mock
         verify(roomDb, times(0)).save(any(Room.class));
     }
 }
