@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Reservations</title>
+    <object th:include="~{fragments/common :: js}" th:remove="tag "></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag "></object>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar('reservations')}"></nav>
+    <div class="container">
+        <div class="text-center my-4">
+            <h2>Reservations</h2>
+            <a type="button" class="btn btn-md btn-primary" th:href="@{/reservations/create}">Add Reservations</a>
+            <a type="button" class="btn btn-md btn-primary" th:href="@{/reservations/chart}">Chart</a>
+        </div>
+        <table id="table-reservation" class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-center">No</th>
+                    <th scope="col" class="text-center">ID</th>
+                    <th scope="col" class="text-center">Room Name</th>
+                    <th scope="col" class="text-center">Patient Name</th>
+                    <th scope="col" class="text-center">Date In</th>
+                    <th scope="col" class="text-center">Date Out</th>
+                    <th scope="col" class="text-center">Status</th>
+                    <th scope="col" class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="reservation, iterationStatus : ${reservations}">
+                    <td th:text="${iterationStatus.count}"></td>
+                    <td th:text="${reservation.id}"></td>
+                    <td th:text="${reservation.room.name}"></td>
+                    <td th:text="${reservation.patient.name}"></td>
+                    <td th:text="${#dates.format(reservation.dateIn, 'dd MMMM yyyy')}"></td>
+                    <td th:text="${#dates.format(reservation.dateOut, 'dd MMMM yyyy')}"></td>
+                    <td>
+                        <p th:if="${reservation.dateIn.after(#dates.createNow())}">Upcoming</p>
+                        <p th:if="${reservation.dateOut.before(#dates.createNow())}">Done</p>
+                        <p th:if="${not reservation.dateIn.after(#dates.createNow()) AND not reservation.dateOut.before(#dates.createNow())}">Ongoing</p>
+                    </td>
+                    <td>
+                        <div class="text-center">
+                            <a type="button" class="btn btn-md btn-primary"
+                                th:href="@{/reservations/{reservationId}(reservationId=${reservation.id})}">Detail
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#table-reservation').DataTable({
+                "lengthMenu": [10, 20, 30],
+            });
+        });
+    </script>    
+</body>
+
+</html>

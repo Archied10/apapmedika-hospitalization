@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <object th:include="~{fragments/common :: js}" th:remove="tag "></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag "></object>
+  <title>Search Patient</title>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar('reservations')}"></nav>
+    <div class="container">
+        <div class="text-center my-4">
+            <h2>Search Patient</h2>
+        </div>
+        <div class="row justify-content-center">
+            <div class="card" style="width: 60rem;">
+                <div class="card-body">
+                    <div>
+                        <form th:action="@{/reservations/create/step1}" th:object="${reservationDTO}" method="GET">
+                            <div class="row my-3">
+                                <label for="NIK" class="col-sm-2 fw-bold col-form-label">NIK</label>
+                                <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="text" id="NIK" th:field="*{NIK}"/>
+                                </div>
+                            </div>
+
+                            <div class="text-center m-3">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

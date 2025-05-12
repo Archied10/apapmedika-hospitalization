@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <object th:include="~{fragments/common :: js}" th:remove="tag "></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag "></object>
+    <title>Patient Found</title>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar('reservations')}"></nav>
+    <div class="container">
+        <div class="text-center my-4">
+            <h2>Patient Found</h2>
+        </div>
+        <div class="row justify-content-center">
+            <div class="card" style="width: 60rem;">
+                <div class="card-body">
+                    <form th:action="@{/reservations/create/step2}" th:object="${reservationDTO}" method="GET">
+                        <input type="hidden" th:field="*{patientId}">
+                        <input type="hidden" th:field="*{NIK}">
+                        <input type="hidden" th:field="*{name}">
+                        <input type="hidden" th:field="*{email}">
+                        <input type="hidden" th:field="*{birthDate}">
+                        <input type="hidden" th:field="*{gender}">
+                        <div class="row my-3">
+                            <label for="NIK" class="col-sm-2 fw-bold col-form-label">NIK</label>
+                            <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
+                            <div class="col-sm-9">
+                                <input class="form-control" type="text" id="NIK" th:value="*{NIK}" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <div class="row my-3">
+                            <label for="name" class="col-sm-2 fw-bold col-form-label">Name</label>
+                            <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
+                            <div class="col-sm-9">
+                                <input class="form-control" type="text" id="name" th:value="*{name}" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <div class="row my-3">
+                            <label for="gender" class="col-sm-2 fw-bold col-form-label">Gender</label>
+                            <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
+                            <div class="col-sm-9">
+                                <input class="form-control" th:if="*{gender}" type="text" value="Male" readonly="true" />
+                                <input class="form-control" th:if="*{!gender}" type="text" value="Female" readonly="true" />
+                            </div>
+                        </div>
+
+                        <div class="row my-3">
+                            <label for="dob" class="col-sm-2 fw-bold col-form-label">Date of Birth</label>
+                            <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
+                            <div class="col-sm-9">
+                                <input class="form-control" type="text" id="dob" th:value="${#dates.format(reservationDTO.birthDate, 'dd-MM-yyyy')}" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <div class="text-center m-3">
+                            <button type="submit" class="btn btn-primary">Create Reservation</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#insert-patient-btn').on('click', function() {
+                $('#patient-form').show();
+                $('#patient-not-found').hide();
+            });
+        });
+    </script>
+</body>
+
+</html>

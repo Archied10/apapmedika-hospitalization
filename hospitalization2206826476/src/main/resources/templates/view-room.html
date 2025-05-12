@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <object th:include="~{fragments/common :: js}" th:remove="tag "></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag "></object>
+    <title>Room Detail</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.css" />
+    <script src="https://cdn.datatables.net/2.1.7/js/dataTables.js"></script>
+</head>
+
+<body>
+<nav th:replace="~{fragments/navbar :: navbar('rooms')}"></nav>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="card" style="width: 80rem;">
+            <div class="card-body">
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3">Room ID</p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <p class="card-text col-sm-5" th:text="${room.id}"></p>
+                </div>
+
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3">Room Name</p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <p class="card-text col-sm-5" th:text="${room.name}"></p>
+                </div>
+
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3">Max Capacity</p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <p class="card-text col-sm-5"><span th:text="${room.maxCapacity}"></span> Pax</p>
+                </div>
+
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3">Price</p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <p class="card-text col-sm-5">Rp<span th:text="${room.pricePerDay}"></span>/Day</p>
+                </div>
+
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3">Description</p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                    <p class="card-text col-sm-5" th:text="${room.description}"></p>
+                </div>
+
+                <div class="row my-3">
+                    <p class="card-text fw-bold col-sm-3">Patient</p>
+                    <p class="card-text fw-bold col-sm-1" style="width: 2%">:</p>
+                </div>
+
+                <form th:action="@{/rooms/{roomId}(roomId=${room.id})}" method="get">
+                    <div class="row my-3">
+                        <div class="col-sm-6">
+                            <label for="dateIn" class="form-label">Reservation Date In</label>
+                            <input type="date" class="form-control" id="dateIn" name="dateIn" 
+                                   th:value="${#dates.format(roomDTO.dateIn, 'yyyy-MM-dd')}" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="dateOut" class="form-label">Reservation Date Out</label>
+                            <input type="date" class="form-control" id="dateOut" name="dateOut" 
+                                   th:value="${#dates.format(roomDTO.dateOut, 'yyyy-MM-dd')}" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Apply</button>
+                </form>
+
+                <div th:if="${error}" class="alert alert-danger mt-3" th:text="${error}"></div>
+                <p class="card-text fw-bold col-sm-3 mt-3" th:text="${'Quota Available: ' + quota}"></p>
+
+                <table id="table-patient" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="text-center">No</th>
+                            <th scope="col" class="text-center">Name</th>
+                            <th scope="col" class="text-center">Gender</th>
+                            <th scope="col" class="text-center">Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="patient, iterationStatus : ${patients}">
+                            <td th:text="${iterationStatus.count}"></td>
+                            <td th:text="${patient.name}"></td>
+                            <td th:text="${patient.gender ? 'Male' : 'Female'}"></td>
+                            <td th:text="${patient.email}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="text-center m-3">
+                    <a type="button" class="btn btn-secondary btn-md" href="/rooms">Back</a>
+                    <a type="button" class="btn btn-warning btn-md" th:href="@{/rooms/{roomId}/update(roomId=${room.id})}">Update</a>
+                    <a type="button" class="btn btn-danger btn-md" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Room</h5>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete the <strong><span th:text="${room.name}"></span></strong> room?
+            </div>
+            <div class="modal-footer">
+                <a type="button" class="btn btn-primary" th:href="@{/rooms/{roomId}/delete(roomId=${room.id})}">Yes</a>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#table-patient').DataTable();
+    });
+</script>  
+</body>
+
+</html>
